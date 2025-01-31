@@ -1,0 +1,55 @@
+const { absen_mahasiswas, AbsenWaktus, sequelize } = require('../models');
+const { Op } = require("sequelize");
+
+const GetScheduleByNim = async (req, res) => {
+  try {
+    const { nim } = req.params;
+
+    // Cari mahasiswa berdasarkan NIM
+    const mahasiswa = await absen_mahasiswas.findOne({
+      where: { nim },
+      attributes: ['dosen_id']
+    });
+
+    if (!mahasiswa) {
+      return res.status(404).json({ message: `Data mahasiswa dengan NIM ${nim} tidak ada.` });
+    }
+
+    const { dosen_id } = mahasiswa;
+
+    // Ambil jadwal berdasarkan dosen_id
+    const jadwal = await AbsenWaktus.findAll({
+      where: { dosen_id },
+      attributes: ['hari', 'jam', 'ruang', 'created_at'],
+      include: [
+        {
+          model: absen_mahasiswas,
+          as: 'mahasiswa', // Gunakan alias sesuai definisi asosiasi
+          attributes: ['matakuliah_nama'], // Hapus DISTINCT di sini
+          where: { nim }
+        }
+      ],
+      order: [['created_at', 'ASC']]
+    });
+
+    if (jadwal.length === 0) {
+      return res.status(404).json({ message: `Jadwal untuk dosen_id ${dosen_id} tidak ditemukan.` });
+    }
+
+    // Ambil data unik matakuliah
+    const processedJadwal = jadwal.map((item) => ({
+      hari: item.hari,
+      jam: item.jam,
+      ruang: item.ruang,
+      matakuliah_nama: [...new Set(item.mahasiswa.map((m) => m.matakuliah_nama))].join(', '), // Hilangkan duplikasi manual
+      created_at: item.created_at,
+    }));
+
+    res.status(200).json(processedJadwal);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Kesalahan fetch", error });
+  }
+};
+
+module.exports = { GetScheduleByNim };

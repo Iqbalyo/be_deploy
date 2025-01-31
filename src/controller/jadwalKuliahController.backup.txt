@@ -1,0 +1,70 @@
+const { absen_mahasiswas, AbsenWaktus } = require('../models');
+
+const GetScheduleByNim = async (req, res) => {
+  try {
+    const { nim } = req.params;
+
+    // Cari data mahasiswa berdasarkan NIM
+    const mahasiswa = await absen_mahasiswas.findOne({
+      where: { nim },
+      attributes: ['dosen_id']
+    });
+
+    if (!mahasiswa) {
+      return res.status(404).json({ message: `Data mahasiswa dengan NIM ${nim} tidak ditemukan.` });
+    }
+
+    const { dosen_id } = mahasiswa;
+
+    // Ambil data jadwal dosen dengan absensi mahasiswa dan urutkan berdasarkan hari dan jam
+    const jadwal = await AbsenWaktus.findAll({
+      where: { dosen_id },
+      attributes: ['id', 'hari', 'jam', 'ruang', 'created_at'],
+      include: [
+        {
+          model: absen_mahasiswas,
+          as: 'mahasiswa', 
+          attributes: ['matakuliah_nama', 'semester', 'periode', 'status'],
+          where: { nim },
+          required: true,
+        }
+      ],
+      order: [
+        ['hari', 'ASC'], // Urutkan hari secara alfabet (Senin sampai Minggu)
+        ['jam', 'ASC'],  // Urutkan jam secara menaik
+      ],
+    });
+
+    if (!jadwal || jadwal.length === 0) {
+      return res.status(404).json({ message: `Jadwal untuk dosen_id ${dosen_id} tidak ditemukan.` });
+    }
+
+    // Format data jadwal untuk output
+    const processedJadwal = jadwal.map((item) => {
+      const absensiMahasiswa = item.mahasiswa.map((m) => {
+        const status = m.status.toLowerCase();
+        return {
+          nama_matakuliah: m.matakuliah_nama,
+          semester: m.semester,
+          periode: m.periode,
+          status: status === 'h' ? 'Hadir' : status === 'i' ? 'Izin' : 'Tanpa Keterangan'
+        };
+      });
+
+      return {
+        hari: item.hari,
+        jam: item.jam,
+        ruang: item.ruang,
+        absensi: absensiMahasiswa,
+        created_at: item.created_at
+      };
+    });
+
+    res.status(200).json(processedJadwal);
+  } catch (error) {
+    console.error("Error fetching schedule: ", error);
+    res.status(500).json({ message: "Kesalahan fetch data", error });
+  }
+};
+
+module.exports = { GetScheduleByNim };

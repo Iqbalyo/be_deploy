@@ -1,0 +1,57 @@
+const { absen_mahasiswas, absen_pertemuans } = require("../models");
+const { Op } = require("sequelize");
+
+const getJadwalHariIni = async (req, res) => {
+  try {
+    const { nim } = req.params;
+    const today = new Date();
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+
+    // Cari jadwal perkuliahan hari ini
+    const jadwalHariIni = await absen_mahasiswas.findAll({
+      where: { nim },
+      include: [
+        {
+          model: absen_pertemuans,
+          as: "pertemuan",
+          where: {
+            tanggal_kuliah: {
+              [Op.between]: [startOfDay, endOfDay],
+            },
+          },
+        },
+      ],
+    });
+
+    if (jadwalHariIni.length === 0) {
+      return res.status(404).json({ message: "Tidak ada jadwal kuliah hari ini" });
+    }
+
+    const formattedData = jadwalHariIni.map((item) => {
+      const pertemuan = item.pertemuan;
+      const now = new Date();
+      let status = "Belum Dimulai";
+
+      if (pertemuan.waktu <= now) {
+        status = item.status || "Tanpa Keterangan";
+      }
+
+      return {
+        matakuliah: pertemuan.matakuliah,
+        ruangan: pertemuan.ruang,
+        dosen: pertemuan.dosen,
+        kelas: pertemuan.kelas,
+        pertemuan: `Ke-${pertemuan.pertemuan_ke}`,
+        status,
+      };
+    });
+
+    res.json(formattedData);
+  } catch (error) {
+    console.error("Error fetching schedule:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { getJadwalHariIni };
