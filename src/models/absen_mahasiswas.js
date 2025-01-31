@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     matakuliah_kode: DataTypes.STRING,
     kelas: DataTypes.STRING,
     pertemuan_ke: DataTypes.INTEGER,
-    nim: DataTypes.STRING,
+    nim: DataTypes.INTEGER,
     nama: DataTypes.STRING,
     status: DataTypes.STRING,
     absen_by: DataTypes.STRING,
