@@ -26,6 +26,7 @@ const findAll = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { user_id, password } = req.body;
+    console.log(user_id)
 
     if (!user_id || !password) {
       return res.status(400).json({
