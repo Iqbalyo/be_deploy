@@ -10,7 +10,7 @@ const port = 3000;
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors({
-    origin: "https://fe-deploy-olive.vercel.app", // Ubah jika perlu
+    origin: ["https://fe-deploy-olive.vercel.app", "http://localhost:5173"]
 }));
 
 // Routes
