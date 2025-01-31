@@ -13,12 +13,12 @@ const getJadwalKuliah = async (req, res) => {
       },
       include: [{
         model: absen_pertemuans,
-        as: 'pertemuan',  // Pastikan alias yang digunakan pada relasi
+        as: 'pertemuan',
         attributes: [
-          [sequelize.fn('DAYNAME', sequelize.fn('CAST', sequelize.col('waktu'), 'TIMESTAMP')), 'hari'],
-          [sequelize.fn('HOUR', sequelize.fn('CAST', sequelize.col('waktu'), 'TIMESTAMP')), 'jam'],
+          [sequelize.fn('TO_CHAR', sequelize.fn('CAST', sequelize.col('waktu'), 'TIMESTAMP'), 'FMDay'), 'hari'], // Mengambil nama hari
+          [sequelize.fn('EXTRACT', sequelize.col('waktu'), 'HOUR'), 'jam'], // Mengambil jam
           'ruang'
-        ]
+        ],
       }],
       group: ['matakuliah_nama', 'kelas', 'pertemuan.hari', 'pertemuan.jam', 'pertemuan.ruang'],
       attributes: ['matakuliah_nama', 'kelas', 'periode', 'semester'],
@@ -26,18 +26,18 @@ const getJadwalKuliah = async (req, res) => {
         [
           sequelize.literal(`
             CASE
-              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Senin' THEN 1
-              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Selasa' THEN 2
-              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Rabu' THEN 3
-              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Kamis' THEN 4
-              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Jumat' THEN 5
-              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Sabtu' THEN 6
-              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Minggu' THEN 7
+              WHEN TO_CHAR(waktu, 'Day') = 'Monday' THEN 1
+              WHEN TO_CHAR(waktu, 'Day') = 'Tuesday' THEN 2
+              WHEN TO_CHAR(waktu, 'Day') = 'Wednesday' THEN 3
+              WHEN TO_CHAR(waktu, 'Day') = 'Thursday' THEN 4
+              WHEN TO_CHAR(waktu, 'Day') = 'Friday' THEN 5
+              WHEN TO_CHAR(waktu, 'Day') = 'Saturday' THEN 6
+              WHEN TO_CHAR(waktu, 'Day') = 'Sunday' THEN 7
             END
           `),
           'ASC'
         ],
-        [sequelize.fn('HOUR', sequelize.fn('CAST', sequelize.col('waktu'), 'TIMESTAMP')), 'ASC']
+        [sequelize.fn('EXTRACT', sequelize.col('waktu'), 'HOUR'), 'ASC'] // Urutkan berdasarkan jam
       ]
     });
 
