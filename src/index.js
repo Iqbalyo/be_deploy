@@ -18,8 +18,9 @@ app.use(router);
 
 // Fallback untuk rute yang tidak ditemukan
 app.use((req, res) => {
-    res.status(404).json({
-        error: "Route not found",
+    res.send({
+        message: "Hallo 👋",
+        status: "Server ready 🚀",
     });
 });
 
