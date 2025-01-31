@@ -43,8 +43,13 @@ const getJadwalKuliah = async (req, res) => {
 
     res.status(200).json(jadwal);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error fetching Jadwal Kuliah for NIM:", nim);
+    console.error("Error details:", error); // Log error details including the stack trace
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message, // Send back the error message in the response (optional)
+      stack: error.stack // Send stack trace for debugging (optional)
+    });
   }
 };
 
