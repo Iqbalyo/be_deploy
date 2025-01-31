@@ -15,8 +15,8 @@ const getJadwalKuliah = async (req, res) => {
         model: absen_pertemuans,
         as: 'jadwal',
         attributes: [
-          [sequelize.fn('DAYNAME', sequelize.col('waktu')), 'hari'], // Mengambil nama hari dari kolom waktu
-          [sequelize.fn('HOUR', sequelize.col('waktu')), 'jam'], // Mengambil jam dari kolom waktu
+          [sequelize.fn('DAYNAME', sequelize.fn('CAST', sequelize.col('waktu'), 'TIMESTAMP')), 'hari'], // Mengonversi kolom waktu ke TIMESTAMP
+          [sequelize.fn('HOUR', sequelize.fn('CAST', sequelize.col('waktu'), 'TIMESTAMP')), 'jam'], // Mengambil jam
           'ruang'
         ],
       }],
@@ -37,9 +37,10 @@ const getJadwalKuliah = async (req, res) => {
           `),
           'ASC'
         ],
-        [sequelize.fn('HOUR', sequelize.col('waktu')), 'ASC'] // Urutkan berdasarkan jam setelah hari
+        [sequelize.fn('HOUR', sequelize.fn('CAST', sequelize.col('waktu'), 'TIMESTAMP')), 'ASC'] // Urutkan berdasarkan jam
       ]
     });
+    
 
     res.status(200).json(jadwal);
   } catch (error) {
