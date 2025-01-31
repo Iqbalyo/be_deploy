@@ -4,9 +4,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "vite build"
-    
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
