@@ -1,7 +1,7 @@
 const { absen_mahasiswas, absen_pertemuans, sequelize } = require("../models");
 
 const getJadwalKuliah = async (req, res) => {
-  const nim = req.params.nim;
+  const {nim} = req.params.nim;
   console.log("Menerima permintaan untuk NIM:", nim); // Log untuk debugging
 
   try {
