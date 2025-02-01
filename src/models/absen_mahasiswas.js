@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
     user_agent: DataTypes.STRING,
     keterangan: DataTypes.STRING,
     semester: DataTypes.STRING,
-    periode: DataTypes.STRING,
+    periode: DataTypes.INTEGER,
     createdAt: { type: DataTypes.DATE, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
     updatedAt: { type: DataTypes.DATE, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
   }, {
