@@ -1,25 +1,18 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class absen_pertemuans extends Model {
     static associate(models) {
       absen_pertemuans.hasMany(models.absen_mahasiswas, {
         foreignKey: 'absen_pertemuan_id',
-        as: 'mahasiswa_absen', // Sesuaikan alias agar tidak sama dengan yang ada di belongsTo()
+        as: 'mahasiswa_absen', // Gunakan alias yang berbeda agar tidak konflik
       });
-      
     }
-    
-
   }
+
   absen_pertemuans.init({
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true, // Menandakan bahwa ini adalah primary key
-      autoIncrement: true // Untuk auto increment jika diperlukan
-    },
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     device_info: DataTypes.STRING,
     network_info: DataTypes.STRING,
     absen_id: DataTypes.STRING,
@@ -63,12 +56,14 @@ module.exports = (sequelize, DataTypes) => {
     semester: DataTypes.STRING,
     periode: DataTypes.STRING,
     created_by: DataTypes.STRING,
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE,
+    created_at: { type: DataTypes.DATE, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
+    updated_at: { type: DataTypes.DATE, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
   }, {
     sequelize,
     modelName: 'absen_pertemuans',
     tableName: 'absen_pertemuans',
+    timestamps: true,
   });
+
   return absen_pertemuans;
 };

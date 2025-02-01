@@ -1,25 +1,18 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class absen_mahasiswas extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
       absen_mahasiswas.belongsTo(models.absen_pertemuans, {
         foreignKey: 'absen_pertemuan_id',
-        as: 'jadwal_pertemuan',
+        as: 'pertemuan',  // Konsisten dengan alias yang digunakan
       });
-      
     }
-    
   }
+
   absen_mahasiswas.init({
-    absen_id: DataTypes.INTEGER,
+    absen_id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     absen_pertemuan_id: DataTypes.INTEGER,
     mahasiswa_id: DataTypes.INTEGER,
     dosen_id: DataTypes.INTEGER,
@@ -32,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     matakuliah_kode: DataTypes.STRING,
     kelas: DataTypes.STRING,
     pertemuan_ke: DataTypes.INTEGER,
-    nim: DataTypes.INTEGER,
+    nim: DataTypes.BIGINT,
     nama: DataTypes.STRING,
     status: DataTypes.STRING,
     absen_by: DataTypes.STRING,
@@ -51,12 +44,14 @@ module.exports = (sequelize, DataTypes) => {
     keterangan: DataTypes.STRING,
     semester: DataTypes.STRING,
     periode: DataTypes.STRING,
+    createdAt: { type: DataTypes.DATE, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
+    updatedAt: { type: DataTypes.DATE, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
   }, {
     sequelize,
     modelName: 'absen_mahasiswas',
     tableName: 'absen_mahasiswas',
+    timestamps: true,
   });
-  console.log('Relasi absen_mahasiswas:', absen_mahasiswas.associations);
 
   return absen_mahasiswas;
 };
