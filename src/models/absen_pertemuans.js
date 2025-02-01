@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
     status: DataTypes.STRING,
     foto: DataTypes.STRING,
     semester: DataTypes.STRING,
-    periode: DataTypes.STRING,
+    periode: DataTypes.INTEGER,
     created_by: DataTypes.STRING,
     created_at: { type: DataTypes.DATE, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
     updated_at: { type: DataTypes.DATE, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
