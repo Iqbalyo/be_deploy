@@ -42,7 +42,8 @@ const getJadwalKuliah = async (req, res) => {
       ]
     });
     
-    console.log("apa :".jadwal); // Cek data yang diterima
+    console.log("apa: " + jadwal);
+    // Cek data yang diterima
     
 
     res.status(200).json(jadwal);
