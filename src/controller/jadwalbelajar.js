@@ -13,7 +13,7 @@ const getJadwalKuliah = async (req, res) => {
         semester: 'Genap'
       },
       include: [{
-        model:jadwal_pertemuan,
+        model: absen_pertemuans,
         as: 'pertemuan',
         attributes: [
           [sequelize.fn('TO_CHAR', sequelize.fn('CAST', sequelize.col('waktu'), 'TIMESTAMP'), 'FMDay'), 'hari'], // Mengambil nama hari
