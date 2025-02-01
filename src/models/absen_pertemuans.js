@@ -1,18 +1,30 @@
 'use strict';
-const { Model } = require('sequelize');
-
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class absen_pertemuans extends Model {
-    static associate(models) {
-      absen_pertemuans.hasMany(models.absen_mahasiswas, {
-        foreignKey: 'absen_pertemuan_id',
-        as: 'mahasiswa_absen', // Gunakan alias yang berbeda agar tidak konflik
-      });
-    }
-  }
+   static associate(models) {
+  // // Asosiasi dengan absen_mahasiswas
+  // absen_pertemuans.hasMany(models.absen_mahasiswas, {
+  //   foreignKey: 'absen_id',
+  //   as: 'jadwal' // Pastikan alias di sini sesuai dengan yang digunakan di absen_mahasiswas
+  // });
 
+  absen_pertemuans.hasMany(models.absen_mahasiswas, {
+    foreignKey: 'absen_pertemuan_id',
+    as: 'mahasiswa',
+  }); 
+
+}
+
+  }
   absen_pertemuans.init({
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true, // Menandakan bahwa ini adalah primary key
+      autoIncrement: true // Untuk auto increment jika diperlukan
+    },
     device_info: DataTypes.STRING,
     network_info: DataTypes.STRING,
     absen_id: DataTypes.STRING,
@@ -54,16 +66,14 @@ module.exports = (sequelize, DataTypes) => {
     status: DataTypes.STRING,
     foto: DataTypes.STRING,
     semester: DataTypes.STRING,
-    periode: DataTypes.INTEGER,
+    periode: DataTypes.STRING,
     created_by: DataTypes.STRING,
-    created_at: { type: DataTypes.DATE, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
-    updated_at: { type: DataTypes.DATE, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
+    created_at: DataTypes.DATE,
+    updated_at: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'absen_pertemuans',
     tableName: 'absen_pertemuans',
-    timestamps: true,
   });
-
   return absen_pertemuans;
 };

@@ -1,197 +1,205 @@
-'use strict';
+"use strict";
+
+const { DataTypes } = require("sequelize");
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('absen_pertemuans', {
+  up: async (queryInterface) => {
+    await queryInterface.createTable("absen_pertemuans", {
       id: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
+        allowNull: false,
         primaryKey: true,
         autoIncrement: true,
       },
       device_info: {
-        type: Sequelize.STRING,
+        type: DataTypes.TEXT,
         allowNull: true,
       },
       network_info: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       absen_id: {
-        type: Sequelize.STRING,
-        allowNull: true,
+        type: DataTypes.INTEGER,
+        allowNull: false,
       },
       dosen_id: {
-        type: Sequelize.STRING,
-        allowNull: true,
+        type: DataTypes.INTEGER,
+        allowNull: false,
       },
       locked_at: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         allowNull: true,
       },
       locked_by: {
-        type: Sequelize.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
       kelas: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(11),
         allowNull: true,
       },
       ip_address: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       matakuliah_kode: {
-        type: Sequelize.STRING,
-        allowNull: true,
+        type: DataTypes.STRING(20),
+        allowNull: false,
       },
       matakuliah: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       presensi_terbuka: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
       status_perkuliahan: {
-        type: Sequelize.STRING,
-        allowNull: true,
+        type: DataTypes.ENUM("tatap-muka", "online", "cancel"),
+        defaultValue: "tatap-muka",
       },
       status_updated_at: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         allowNull: true,
       },
       status_updated_by: {
-        type: Sequelize.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
       keterangan: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       sks: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
       dosen: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       jurusan: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       ruang: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       waktu: {
-        type: Sequelize.DATE,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       tanggal_kuliah: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         allowNull: true,
       },
       lama_kuliah: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
       pekan_ke: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
       pertemuan_ke: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
       bahasan: {
-        type: Sequelize.STRING,
+        type: DataTypes.TEXT,
         allowNull: true,
       },
       lokasi: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(100),
         allowNull: true,
       },
       device_id: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       user_agent: {
-        type: Sequelize.STRING,
+        type: DataTypes.TEXT,
         allowNull: true,
       },
       waktu_tunggu: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
       waktu_presensi: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.STRING(200),
         allowNull: true,
       },
       buka_at: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         allowNull: true,
       },
       buka_by: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       buka_from: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       tutup_at: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         allowNull: true,
       },
       libur: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.TEXT,
         allowNull: true,
       },
       batas_lokasi: {
-        type: Sequelize.STRING,
-        allowNull: true,
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
       kirim_notifikasi: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
         allowNull: true,
+        defaultValue: false,
       },
       kode: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       status: {
-        type: Sequelize.STRING,
-        allowNull: true,
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: -1,
       },
       foto: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       semester: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       periode: {
-        type: Sequelize.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
       created_by: {
-        type: Sequelize.STRING,
-        allowNull: true,
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        defaultValue: "dosen",
       },
       created_at: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         allowNull: true,
       },
       updated_at: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         allowNull: true,
       },
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('absen_pertemuans');
+  down: async (queryInterface) => {
+    await queryInterface.dropTable("absen_pertemuans");
   },
 };

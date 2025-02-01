@@ -1,18 +1,33 @@
 'use strict';
-const { Model } = require('sequelize');
-
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class absen_mahasiswas extends Model {
-    static associate(models) {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {  //todo associate(models): Metode ini digunakan oleh Sequelize untuk mendefinisikan asosiasi antara model satu dengan yang lainnya.
+      // define association here
+      // Definisikan hubungan dengan AbsenWaktus
+      //absen_mahasiswas.hasMany(models.AbsenWaktus, { foreignKey: 'absen_id', as: 'waktu' });
+
+      // absen_mahasiswas.hasMany(models.absen_pertemuans, {
+      //   foreignKey: 'absen_id',
+      //   as: 'jadwal' // Gunakan alias 'jadwal' di sini untuk konsistensi
+      // });
       absen_mahasiswas.belongsTo(models.absen_pertemuans, {
         foreignKey: 'absen_pertemuan_id',
-        as: 'pertemuan',  // Konsisten dengan alias yang digunakan
+        as: 'pertemuan',
       });
+      
+
     }
   }
-
   absen_mahasiswas.init({
-    absen_id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    absen_id: DataTypes.INTEGER,
     absen_pertemuan_id: DataTypes.INTEGER,
     mahasiswa_id: DataTypes.INTEGER,
     dosen_id: DataTypes.INTEGER,
@@ -25,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     matakuliah_kode: DataTypes.STRING,
     kelas: DataTypes.STRING,
     pertemuan_ke: DataTypes.INTEGER,
-    nim: DataTypes.BIGINT,
+    nim: DataTypes.STRING,
     nama: DataTypes.STRING,
     status: DataTypes.STRING,
     absen_by: DataTypes.STRING,
@@ -43,15 +58,13 @@ module.exports = (sequelize, DataTypes) => {
     user_agent: DataTypes.STRING,
     keterangan: DataTypes.STRING,
     semester: DataTypes.STRING,
-    periode: DataTypes.INTEGER,
-    createdAt: { type: DataTypes.DATE, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
-    updatedAt: { type: DataTypes.DATE, defaultValue: sequelize.literal('CURRENT_TIMESTAMP') },
+    periode: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'absen_mahasiswas',
     tableName: 'absen_mahasiswas',
-    timestamps: true,
   });
+  console.log('Relasi absen_mahasiswas:', absen_mahasiswas.associations);
 
   return absen_mahasiswas;
 };

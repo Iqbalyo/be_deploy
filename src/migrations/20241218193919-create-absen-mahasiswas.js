@@ -1,34 +1,28 @@
-'use strict';
-
+"use strict";
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('absen_mahasiswas', {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("absen_mahasiswas", {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
       absen_id: {
         type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
       },
       absen_pertemuan_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'absen_pertemuans',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
       },
       mahasiswa_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
       },
       dosen_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
       },
       matakuliah_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
       },
       data_beacon: {
         type: Sequelize.STRING,
@@ -111,18 +105,9 @@ module.exports = {
       periode: {
         type: Sequelize.STRING,
       },
-      createdAt: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('now'),
-      },
-      updatedAt: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('now'),
-      },
     });
   },
-
-  down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('absen_mahasiswas');
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("absen_mahasiswas");
   },
 };
