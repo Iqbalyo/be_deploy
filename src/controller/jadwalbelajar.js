@@ -1,55 +1,39 @@
 const { absen_mahasiswas, absen_pertemuans, sequelize } = require("../models");
 
 const getJadwalKuliah = async (req, res) => {
-  const nim  = req.params;  // Mengambil nim dari parameter URL
-  console.log("Menerima permintaan untuk NIM:", nim); // Log untuk debugging
-
   try {
+    const { nim } = req.params;  // Mengambil NIM dari URL parameter
+
+    console.log("Menerima permintaan untuk NIM:", nim); // Log untuk debugging
+
+    // Cek apakah nim diberikan
+    if (!nim) {
+      return res.status(400).json({ message: "NIM harus diberikan" });
+    }
+
+    // Query untuk mendapatkan jadwal kuliah berdasarkan NIM
     const jadwal = await absen_mahasiswas.findAll({
-      where: {
-        nim: nim,
-        periode: '2023',
-        semester: 'Genap'
-      },
-      include: [{
-        model: absen_pertemuans,
-        as: 'pertemuan',
-        attributes: [
-          [sequelize.fn('TO_CHAR', sequelize.fn('CAST', sequelize.col('waktu'), 'TIMESTAMP'), 'FMDay'), 'hari'], // Mengambil nama hari
-          [sequelize.fn('EXTRACT', sequelize.col('waktu'), 'HOUR'), 'jam'], // Mengambil jam
-          'ruang'
-        ],
-      }],
-      group: ['matakuliah_nama', 'kelas', 'pertemuan.hari', 'pertemuan.jam', 'pertemuan.ruang'],
-      attributes: ['matakuliah_nama', 'kelas', 'periode', 'semester'],
-      order: [
-        [
-          sequelize.literal(`
-            CASE
-              WHEN TO_CHAR(waktu, 'Day') = 'Monday' THEN 1
-              WHEN TO_CHAR(waktu, 'Day') = 'Tuesday' THEN 2
-              WHEN TO_CHAR(waktu, 'Day') = 'Wednesday' THEN 3
-              WHEN TO_CHAR(waktu, 'Day') = 'Thursday' THEN 4
-              WHEN TO_CHAR(waktu, 'Day') = 'Friday' THEN 5
-              WHEN TO_CHAR(waktu, 'Day') = 'Saturday' THEN 6
-              WHEN TO_CHAR(waktu, 'Day') = 'Sunday' THEN 7
-            END
-          `),
-          'ASC'
-        ],
-        [sequelize.fn('EXTRACT', sequelize.col('waktu'), 'HOUR'), 'ASC'] // Urutkan berdasarkan jam
-      ]
+      where: { nim },
+      include: [
+        {
+          model: absen_pertemuans,
+          as: 'pertemuan',  // Sesuaikan dengan alias yang digunakan di asosiasi
+          attributes: ['id', 'matakuliah', 'kelas', 'waktu', 'pertemuan_ke', 'semester', 'periode'],
+        }
+      ],
+      attributes: ['absen_id', 'nim', 'nama', 'status', 'absen_at', 'matakuliah_nama', 'kelas', 'semester', 'periode'],
+      order: [['absen_at', 'DESC']], // Urutkan dari yang terbaru
     });
 
-    res.status(200).json(jadwal);
+    if (jadwal.length === 0) {
+      return res.status(404).json({ message: "Jadwal tidak ditemukan untuk NIM ini." });
+    }
+
+    return res.status(200).json({ success: true, data: jadwal });
+
   } catch (error) {
-    console.error("Error fetching Jadwal Kuliah for NIM:", nim);
-    console.error("Error details:", error); // Log error details including the stack trace
-    res.status(500).json({
-      message: "Internal Server Error",
-      error: error.message,
-      stack: error.stack // Send stack trace for debugging
-    });
+    console.error("Error saat mengambil jadwal kuliah:", error);
+    return res.status(500).json({ message: "Terjadi kesalahan pada server.", error: error.message });
   }
 };
 

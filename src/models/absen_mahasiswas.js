@@ -9,22 +9,14 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {  //todo associate(models): Metode ini digunakan oleh Sequelize untuk mendefinisikan asosiasi antara model satu dengan yang lainnya.
-      // define association here
-      // Definisikan hubungan dengan AbsenWaktus
-      //absen_mahasiswas.hasMany(models.AbsenWaktus, { foreignKey: 'absen_id', as: 'waktu' });
-
-      // absen_mahasiswas.hasMany(models.absen_pertemuans, {
-      //   foreignKey: 'absen_id',
-      //   as: 'jadwal' // Gunakan alias 'jadwal' di sini untuk konsistensi
-      // });
+    static associate(models) {
       absen_mahasiswas.belongsTo(models.absen_pertemuans, {
         foreignKey: 'absen_pertemuan_id',
-        as: 'pertemuan',
+        as: 'jadwal_pertemuan',
       });
       
-
     }
+    
   }
   absen_mahasiswas.init({
     absen_id: DataTypes.INTEGER,

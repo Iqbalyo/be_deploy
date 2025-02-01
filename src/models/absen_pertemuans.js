@@ -4,19 +4,14 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class absen_pertemuans extends Model {
-   static associate(models) {
-  // // Asosiasi dengan absen_mahasiswas
-  // absen_pertemuans.hasMany(models.absen_mahasiswas, {
-  //   foreignKey: 'absen_id',
-  //   as: 'jadwal' // Pastikan alias di sini sesuai dengan yang digunakan di absen_mahasiswas
-  // });
-
-  absen_pertemuans.hasMany(models.absen_mahasiswas, {
-    foreignKey: 'absen_pertemuan_id',
-    as: 'mahasiswa',
-  }); 
-
-}
+    static associate(models) {
+      absen_pertemuans.hasMany(models.absen_mahasiswas, {
+        foreignKey: 'absen_pertemuan_id',
+        as: 'mahasiswa_absen', // Sesuaikan alias agar tidak sama dengan yang ada di belongsTo()
+      });
+      
+    }
+    
 
   }
   absen_pertemuans.init({
