@@ -1,5 +1,3 @@
-//berhubungan dg login dan kehadiran dan fe nya TableKehadiran.jsx
-
 const { absen_mahasiswas, AktivitasKuliah, sequelize } = require("../models");
 
 const findAllabsen = async (req, res) => {
@@ -11,6 +9,7 @@ const findAllabsen = async (req, res) => {
       where: { nim: id },
       order: [['semester_ke', 'DESC']]
     });
+
     console.log('Aktivitas Terakhir:', aktivitasTerakhir);
 
     if (!aktivitasTerakhir) {
@@ -19,17 +18,7 @@ const findAllabsen = async (req, res) => {
 
     const semesterTerakhir = aktivitasTerakhir.semester_ke;
 
-
-    // Query semua semester saat ini dari aktivitas_kuliahs
-    // const semuaSemesterSaatIni = await AktivitasKuliah.findAll({
-    //   where: { nim: id },
-    //   attributes: ['semester_ke'],
-    //   order: [['semester_ke', 'ASC']]
-    // });
-
-    // const daftarSemester = semuaSemesterSaatIni.map(aktivitas => aktivitas.semester_ke);
-
-    // Query data absensi berdasarkan semester terakhir
+    // Query untuk mendapatkan pertemuan terakhir
     const data = await absen_mahasiswas.findAll({
       attributes: [
         "matakuliah_nama",
@@ -45,10 +34,33 @@ const findAllabsen = async (req, res) => {
         semester: aktivitasTerakhir.semester,
         periode: aktivitasTerakhir.periode
       },
-      group: ["matakuliah_nama", "semester", "periode"]
+      group: ["matakuliah_nama", "semester", "periode"],
+      raw: true
     });
-    
+
     console.log('Data Absensi:', data);
+
+    // Proses pengurangan jika ada buka_at yang NULL
+    for (let i = 0; i < data.length; i++) {
+      const pertemuanTerakhir = data[i].pertemuan_terakhir;
+
+      if (pertemuanTerakhir) {
+        const jumlahNullBukaAt = await absen_mahasiswas.count({
+          where: {
+            nim: id,
+            semester: aktivitasTerakhir.semester,
+            periode: aktivitasTerakhir.periode,
+            buka_at: null, // Hanya hitung yang buka_at nya NULL
+            pertemuan_ke: { [sequelize.Op.lte]: pertemuanTerakhir } // Hanya hitung dalam rentang pertemuan terakhir
+          }
+        });
+
+        console.log(`Jumlah NULL buka_at untuk ${data[i].matakuliah_nama}:`, jumlahNullBukaAt);
+
+        // Kurangi pertemuan terakhir dengan jumlah NULL pada buka_at
+        data[i].pertemuan_terakhir = pertemuanTerakhir - jumlahNullBukaAt;
+      }
+    }
 
     res.json({
       semester: aktivitasTerakhir.semester,
