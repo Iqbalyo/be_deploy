@@ -1,5 +1,3 @@
-//berhubungan dg login dan kehadiran dan fe nya TableKehadiran.jsx
-
 const { absen_mahasiswas, AktivitasKuliah, sequelize } = require("../models");
 
 const findAllabsen = async (req, res) => {
@@ -11,6 +9,7 @@ const findAllabsen = async (req, res) => {
       where: { nim: id },
       order: [['semester_ke', 'DESC']]
     });
+
     console.log('Aktivitas Terakhir:', aktivitasTerakhir);
 
     if (!aktivitasTerakhir) {
@@ -19,23 +18,20 @@ const findAllabsen = async (req, res) => {
 
     const semesterTerakhir = aktivitasTerakhir.semester_ke;
 
-
-    // Query semua semester saat ini dari aktivitas_kuliahs
-    // const semuaSemesterSaatIni = await AktivitasKuliah.findAll({
-    //   where: { nim: id },
-    //   attributes: ['semester_ke'],
-    //   order: [['semester_ke', 'ASC']]
-    // });
-
-    // const daftarSemester = semuaSemesterSaatIni.map(aktivitas => aktivitas.semester_ke);
-
     // Query data absensi berdasarkan semester terakhir
     const data = await absen_mahasiswas.findAll({
       attributes: [
         "matakuliah_nama",
         "semester",
         "periode",
-        [sequelize.fn("MAX", sequelize.col("pertemuan_ke")), "pertemuan_terakhir"], // Ambil pertemuan terakhir
+        [sequelize.fn("COUNT", sequelize.col("pertemuan_ke")), "total_pertemuan"], // Hitung jumlah total pertemuan (termasuk null)
+        [sequelize.fn("SUM", sequelize.literal(`CASE WHEN buka_at IS NULL THEN 1 ELSE 0 END`)), "null_buka_at"], // Hitung jumlah buka_at yang NULL
+        [
+          sequelize.literal(
+            "COUNT(pertemuan_ke) - SUM(CASE WHEN buka_at IS NULL THEN 1 ELSE 0 END)"
+          ),
+          "pertemuan_terakhir"
+        ], // Kurangi total pertemuan dengan jumlah null pada buka_at
         [sequelize.fn("SUM", sequelize.literal(`CASE WHEN status = 'H' THEN 1 ELSE 0 END`)), "hadir"],
         [sequelize.fn("SUM", sequelize.literal(`CASE WHEN status = 'I' THEN 1 ELSE 0 END`)), "izin"],
         [sequelize.fn("SUM", sequelize.literal(`CASE WHEN status = 'A' THEN 1 ELSE 0 END`)), "tanpaKeterangan"],
@@ -47,7 +43,7 @@ const findAllabsen = async (req, res) => {
       },
       group: ["matakuliah_nama", "semester", "periode"]
     });
-    
+
     console.log('Data Absensi:', data);
 
     res.json({
