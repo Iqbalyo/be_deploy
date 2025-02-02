@@ -47,7 +47,7 @@ module.exports = {
       },
       semester_ke: {
         type: Sequelize.INTEGER,
-      },
+      }
     });
   },
   async down(queryInterface, Sequelize) {

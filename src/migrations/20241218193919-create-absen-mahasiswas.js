@@ -104,7 +104,7 @@ module.exports = {
       },
       periode: {
         type: Sequelize.INTEGER,
-      },
+      }
     });
   },
   async down(queryInterface, Sequelize) {

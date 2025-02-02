@@ -185,8 +185,18 @@ module.exports = {
       },
       created_by: {
         type: DataTypes.STRING(255),
-        allowNull: false,
+        allowNull: true,
         defaultValue: "dosen",
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: DataTypes.NOW,
       },
     });
   },
