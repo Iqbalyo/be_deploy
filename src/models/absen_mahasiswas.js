@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
     user_agent: DataTypes.STRING,
     keterangan: DataTypes.STRING,
     semester: DataTypes.STRING,
-    periode: DataTypes.STRING,
+    periode: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'absen_mahasiswas',
