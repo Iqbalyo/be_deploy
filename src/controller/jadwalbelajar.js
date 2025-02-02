@@ -1,6 +1,8 @@
+const { absen_mahasiswas, absen_pertemuans, sequelize } = require("../models");
+
 const getJadwalKuliah = async (req, res) => {
   const nim = req.params.nim;
-  console.log("Menerima permintaan untuk NIM:", nim); // Debugging
+  console.log("Menerima permintaan untuk NIM:", nim); // Log untuk debugging
 
   try {
     const jadwal = await absen_mahasiswas.findAll({
@@ -11,34 +13,39 @@ const getJadwalKuliah = async (req, res) => {
       },
       include: [{
         model: absen_pertemuans,
-        as: 'pertemuan',
+        as: 'jadwal',
         attributes: [
-          [sequelize.literal(`TO_CHAR(waktu, 'Day')`), 'hari'], // PostgreSQL: Mengambil nama hari
-          [sequelize.literal(`EXTRACT(HOUR FROM waktu)`), 'jam'], // PostgreSQL: Mengambil jam
+          [sequelize.fn('DAYNAME', sequelize.col('waktu')), 'hari'], // Mengambil nama hari dari kolom waktu
+          [sequelize.fn('HOUR', sequelize.col('waktu')), 'jam'], // Mengambil jam dari kolom waktu
           'ruang'
         ],
       }],
+      group: ['matakuliah_nama', 'kelas', 'jadwal.hari', 'jadwal.jam', 'jadwal.ruang'],
       attributes: ['matakuliah_nama', 'kelas', 'periode', 'semester'],
       order: [
         [
-          sequelize.literal(`CASE
-              WHEN TO_CHAR(waktu, 'Day') = 'Monday' THEN 1
-              WHEN TO_CHAR(waktu, 'Day') = 'Tuesday' THEN 2
-              WHEN TO_CHAR(waktu, 'Day') = 'Wednesday' THEN 3
-              WHEN TO_CHAR(waktu, 'Day') = 'Thursday' THEN 4
-              WHEN TO_CHAR(waktu, 'Day') = 'Friday' THEN 5
-              WHEN TO_CHAR(waktu, 'Day') = 'Saturday' THEN 6
-              WHEN TO_CHAR(waktu, 'Day') = 'Sunday' THEN 7
+          sequelize.literal(`
+            CASE
+              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Senin' THEN 1
+              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Selasa' THEN 2
+              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Rabu' THEN 3
+              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Kamis' THEN 4
+              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Jumat' THEN 5
+              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Sabtu' THEN 6
+              WHEN TRIM(SUBSTRING_INDEX(waktu, ',', 1)) = 'Minggu' THEN 7
             END
-          `), 'ASC'
+          `),
+          'ASC'
         ],
-        [sequelize.literal(`EXTRACT(HOUR FROM waktu)`), 'ASC']
+        [sequelize.fn('HOUR', sequelize.col('waktu')), 'ASC'] // Urutkan berdasarkan jam setelah hari
       ]
     });
 
     res.status(200).json(jadwal);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Terjadi kesalahan server", error });
+    res.status(500).json({ message: "Internal Server Erroryaaaaaa" });
   }
 };
+
+module.exports = { getJadwalKuliah };
