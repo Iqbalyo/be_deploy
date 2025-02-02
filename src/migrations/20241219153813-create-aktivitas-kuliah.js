@@ -47,7 +47,17 @@ module.exports = {
       },
       semester_ke: {
         type: Sequelize.INTEGER,
-      }
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: DataTypes.NOW,
+      },
     });
   },
   async down(queryInterface, Sequelize) {
