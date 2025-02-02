@@ -42,6 +42,8 @@ module.exports = (sequelize, DataTypes) => {
     keterangan: DataTypes.STRING,
     semester: DataTypes.STRING,
     periode: DataTypes.INTEGER,
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'absen_mahasiswas',
