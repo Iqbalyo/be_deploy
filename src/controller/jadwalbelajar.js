@@ -8,7 +8,7 @@ const getJadwalKuliah = async (req, res) => {
     const jadwal = await absen_mahasiswas.findAll({
       where: {
         nim: nim,
-        periode: periode.periode,
+        periode: '2023',
         semester: 'Genap'
       },
       include: [{
