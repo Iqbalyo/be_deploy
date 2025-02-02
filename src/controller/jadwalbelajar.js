@@ -15,8 +15,8 @@ const getJadwalKuliah = async (req, res) => {
         model: absen_pertemuans,
         as: 'jadwal',
         attributes: [
-          [sequelize.fn('DAYNAME', sequelize.col('waktu')), 'hari'], // Mengambil nama hari dari kolom waktu
-          [sequelize.fn('HOUR', sequelize.col('waktu')), 'jam'], // Mengambil jam dari kolom waktu
+          [sequelize.fn('TRIM', sequelize.fn('SUBSTRING_INDEX', sequelize.col('waktu'), ',', 1)), 'hari'], // Ambil hari dari string
+          [sequelize.fn('TRIM', sequelize.fn('SUBSTRING_INDEX', sequelize.col('waktu'), ',', -1)), 'jam'], // Ambil jam dari string
           'ruang'
         ],
       }],
@@ -37,14 +37,14 @@ const getJadwalKuliah = async (req, res) => {
           `),
           'ASC'
         ],
-        [sequelize.fn('HOUR', sequelize.col('waktu')), 'ASC'] // Urutkan berdasarkan jam setelah hari
+        [sequelize.fn('TRIM', sequelize.fn('SUBSTRING_INDEX', sequelize.col('waktu'), ',', -1)), 'ASC'] // Urutkan berdasarkan jam dari string
       ]
     });
 
     res.status(200).json(jadwal);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Erroryaaaaaa" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
