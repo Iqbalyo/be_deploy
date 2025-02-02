@@ -38,7 +38,7 @@ const findAllabsen = async (req, res) => {
         [sequelize.fn("MAX", sequelize.col("pertemuan_ke")), "pertemuan_terakhir"], // Ambil pertemuan terakhir
         [sequelize.fn("SUM", sequelize.literal(`CASE WHEN status = 'H' THEN 1 ELSE 0 END`)), "hadir"],
         [sequelize.fn("SUM", sequelize.literal(`CASE WHEN status = 'I' THEN 1 ELSE 0 END`)), "izin"],
-        [sequelize.fn("SUM", sequelize.literal(`CASE WHEN status IS NULL THEN 1 ELSE 0 END`)), "tanpaKeterangan"],
+        [sequelize.fn("SUM", sequelize.literal(`CASE WHEN status = 'NULL' THEN 1 ELSE 0 END`)), "tanpaKeterangan"],
       ],
       where: {
         nim: id,
