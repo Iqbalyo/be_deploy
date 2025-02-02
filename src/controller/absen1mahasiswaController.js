@@ -1,5 +1,3 @@
-//berhubungan dg login dan kehadiran dan fe nya TableKehadiran.jsx
-
 const { absen_mahasiswas, AktivitasKuliah, sequelize } = require("../models");
 
 const findAllabsen = async (req, res) => {
@@ -19,42 +17,41 @@ const findAllabsen = async (req, res) => {
 
     const semesterTerakhir = aktivitasTerakhir.semester_ke;
 
-
-    // Query semua semester saat ini dari aktivitas_kuliahs
-    // const semuaSemesterSaatIni = await AktivitasKuliah.findAll({
-    //   where: { nim: id },
-    //   attributes: ['semester_ke'],
-    //   order: [['semester_ke', 'ASC']]
-    // });
-
-    // const daftarSemester = semuaSemesterSaatIni.map(aktivitas => aktivitas.semester_ke);
-
     // Query data absensi berdasarkan semester terakhir
     const data = await absen_mahasiswas.findAll({
       attributes: [
         "matakuliah_nama",
         "semester",
         "periode",
-        [sequelize.fn("MAX", sequelize.col("pertemuan_ke")), "pertemuan_terakhir"], // Ambil pertemuan terakhir
+        [sequelize.fn("MAX", sequelize.col("pertemuan_ke")), "pertemuan_terakhir"],
         [sequelize.fn("SUM", sequelize.literal(`CASE WHEN status = 'H' THEN 1 ELSE 0 END`)), "hadir"],
         [sequelize.fn("SUM", sequelize.literal(`CASE WHEN status = 'I' THEN 1 ELSE 0 END`)), "izin"],
-        [sequelize.fn("SUM", sequelize.literal(`CASE WHEN status = 'NULL' THEN 1 ELSE 0 END`)), "tanpaKeterangan"],
+        [sequelize.fn("SUM", sequelize.literal(`CASE WHEN COALESCE(status, 'A') = 'A' THEN 1 ELSE 0 END`)), "tanpaKeterangan"]
       ],
       where: {
         nim: id,
         semester: aktivitasTerakhir.semester,
         periode: aktivitasTerakhir.periode
       },
-      group: ["matakuliah_nama", "semester", "periode"]
+      group: ["matakuliah_nama", "semester", "periode"],
+      raw: true
     });
-    
+
     console.log('Data Absensi:', data);
+
+    // **Hapus tanpaKeterangan jika bernilai 0**
+    const filteredData = data.map(item => {
+      if (item.tanpaKeterangan === 0) {
+        delete item.tanpaKeterangan;
+      }
+      return item;
+    });
 
     res.json({
       semester: aktivitasTerakhir.semester,
       periode: aktivitasTerakhir.periode,
       semesterTerakhir,
-      data
+      data: filteredData
     });
   } catch (error) {
     console.error("Error fetching data:", error);
