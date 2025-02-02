@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
     dosen: DataTypes.STRING,
     jurusan: DataTypes.STRING,
     ruang: DataTypes.STRING,
-    waktu: DataTypes.DATE,
+    waktu: DataTypes.STRING,
     tanggal_kuliah: DataTypes.DATE,
     lama_kuliah: DataTypes.INTEGER,
     pekan_ke: DataTypes.INTEGER,
