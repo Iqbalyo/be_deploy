@@ -26,7 +26,9 @@ module.exports = (sequelize, DataTypes) => {
     sks_lulus: DataTypes.INTEGER,
     sks_dikontrak: DataTypes.INTEGER,
     sts_kul: DataTypes.STRING,
-    semester_ke: DataTypes.INTEGER
+    semester_ke: DataTypes.INTEGER,
+    createdat: DataTypes.DATE,
+    updatedat: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'AktivitasKuliah',
