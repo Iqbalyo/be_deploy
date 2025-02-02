@@ -35,8 +35,8 @@ module.exports = (sequelize, DataTypes) => {
     sts_bayar: DataTypes.STRING,
     user_id: DataTypes.INTEGER,
     password: DataTypes.STRING,
-    
-
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'mahasiswa',
