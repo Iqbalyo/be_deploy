@@ -1,4 +1,6 @@
-const { absen_mahasiswas, absen_pertemuans, AktivitasKuliah, sequelize } = require("../models");
+//berhubungan dg login dan kehadiran dan fe nya TableKehadiran.jsx
+
+const { absen_mahasiswas, AktivitasKuliah, sequelize } = require("../models");
 
 const findAllabsen = async (req, res) => {
   try {
@@ -9,7 +11,6 @@ const findAllabsen = async (req, res) => {
       where: { nim: id },
       order: [['semester_ke', 'DESC']]
     });
-
     console.log('Aktivitas Terakhir:', aktivitasTerakhir);
 
     if (!aktivitasTerakhir) {
@@ -18,41 +19,35 @@ const findAllabsen = async (req, res) => {
 
     const semesterTerakhir = aktivitasTerakhir.semester_ke;
 
-    // Query data absensi berdasarkan semester terakhir dengan JOIN ke tabel absen_pertemuans
+
+    // Query semua semester saat ini dari aktivitas_kuliahs
+    // const semuaSemesterSaatIni = await AktivitasKuliah.findAll({
+    //   where: { nim: id },
+    //   attributes: ['semester_ke'],
+    //   order: [['semester_ke', 'ASC']]
+    // });
+
+    // const daftarSemester = semuaSemesterSaatIni.map(aktivitas => aktivitas.semester_ke);
+
+    // Query data absensi berdasarkan semester terakhir
     const data = await absen_mahasiswas.findAll({
       attributes: [
         "matakuliah_nama",
         "semester",
         "periode",
-        [sequelize.fn("MAX", sequelize.col("absen_mahasiswas.pertemuan_ke")), "pertemuan_terakhir"], // Ambil pertemuan terakhir
-        [sequelize.fn("SUM", sequelize.literal(`CASE WHEN absen_mahasiswas.status = 'H' THEN 1 ELSE 0 END`)), "hadir"],
-        [sequelize.fn("SUM", sequelize.literal(`CASE WHEN absen_mahasiswas.status = 'I' THEN 1 ELSE 0 END`)), "izin"],
-        [sequelize.fn("SUM", sequelize.literal(`CASE WHEN absen_mahasiswas.status = 'A' THEN 1 ELSE 0 END`)), "tanpaKeterangan"],
-        [sequelize.fn("COUNT", sequelize.literal(`CASE WHEN absen_pertemuans.buka_at IS NULL THEN 1 ELSE NULL END`)), "jumlah_null_buka_at"] // Hitung NULL di buka_at dari absen_pertemuans
+        [sequelize.fn("MAX", sequelize.col("pertemuan_ke")), "pertemuan_terakhir"], // Ambil pertemuan terakhir
+        [sequelize.fn("SUM", sequelize.literal(`CASE WHEN status = 'H' THEN 1 ELSE 0 END`)), "hadir"],
+        [sequelize.fn("SUM", sequelize.literal(`CASE WHEN status = 'I' THEN 1 ELSE 0 END`)), "izin"],
+        [sequelize.fn("SUM", sequelize.literal(`CASE WHEN status = 'A' THEN 1 ELSE 0 END`)), "tanpaKeterangan"],
       ],
       where: {
         nim: id,
         semester: aktivitasTerakhir.semester,
         periode: aktivitasTerakhir.periode
       },
-      include: [
-        {
-          model: absen_pertemuans,
-          as: "pertemuans",
-          required: false, // Pakai LEFT JOIN agar tetap menampilkan data meskipun tidak ada di absen_pertemuans
-          attributes: []
-        }
-      ],
       group: ["matakuliah_nama", "semester", "periode"]
     });
-
-    // Kurangi nilai pertemuan terakhir dengan jumlah buka_at yang NULL
-    data.forEach(item => {
-      const pertemuanTerakhir = item.dataValues.pertemuan_terakhir || 0;
-      const jumlahNullBukaAt = item.dataValues.jumlah_null_buka_at || 0;
-      item.dataValues.pertemuan_akhir_setelah_null = pertemuanTerakhir - jumlahNullBukaAt;
-    });
-
+    
     console.log('Data Absensi:', data);
 
     res.json({
