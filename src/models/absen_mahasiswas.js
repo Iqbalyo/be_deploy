@@ -1,13 +1,11 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class absen_mahasiswas extends Model {
     static associate(models) {
       absen_mahasiswas.belongsTo(models.absen_pertemuans, {
         foreignKey: 'absen_pertemuan_id',
-        as: 'pertemuan', // Asosiasi dengan alias 'jadwal'
+        as: 'pertemuan', // Sesuaikan alias dengan yang didefinisikan di model 'absen_pertemuans'
       });
     }
   }

@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       absen_pertemuans.hasMany(models.absen_mahasiswas, {
         foreignKey: 'absen_pertemuan_id',
-        as: 'mahasiswa',
+        as: 'pertemuan',  // Ganti alias 'mahasiswa' dengan 'pertemuan'
       });
     }
   }
