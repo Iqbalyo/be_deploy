@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       absen_mahasiswas.belongsTo(models.absen_pertemuans, {
         foreignKey: 'absen_pertemuan_id',
-        as: 'jadwal', // Asosiasi dengan alias 'jadwal'
+        as: 'pertemuan', // Asosiasi dengan alias 'jadwal'
       });
     }
   }
