@@ -49,14 +49,14 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       createdAt: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: true,
-        defaultValue: DataTypes.NOW,
+        defaultValue: Sequelize.NOW,
       },
       updatedAt: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: true,
-        defaultValue: DataTypes.NOW,
+        defaultValue: Sequelize.NOW,
       },
     });
   },
