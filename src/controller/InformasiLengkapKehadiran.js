@@ -7,19 +7,27 @@ const getInformasiKehadiran = async (req, res) => {
     // Ambil data kehadiran berdasarkan nama mata kuliah
     const dataKehadiran = await absen_mahasiswas.findAll({
       where: { matakuliah_nama: matakuliah_nama },
-      include: [{
-        model: absen_pertemuans,
-        as: 'pertemuan',
-        attributes: ['pertemuan_ke', 'waktu', 'tanggal_kuliah', 'status'], // Ambil field yang diperlukan
-      }],
-      attributes: ['nim', 'matakuliah_nama', 'pertemuan_ke', 'status'], // Ambil field yang diperlukan
+      include: [
+        {
+          model: absen_pertemuans,
+          as: "pertemuan",
+          attributes: ["pertemuan_ke", "waktu", "tanggal_kuliah", "status"], // Ambil field yang diperlukan
+        },
+      ],
+      attributes: ["nim", "matakuliah_nama", "pertemuan_ke", "status"], // Ambil field yang diperlukan
     });
 
     if (!dataKehadiran.length) {
       return res.status(404).json({ message: "Data kehadiran tidak ditemukan" });
     }
 
-    res.status(200).json(dataKehadiran);
+    // Ganti status null menjadi "Perkuliahan dibatalkan oleh dosen"
+    const formattedData = dataKehadiran.map((item) => ({
+      ...item.toJSON(),
+      status: item.status === null ? "Perkuliahan dibatalkan oleh dosen" : item.status,
+    }));
+
+    res.status(200).json(formattedData);
   } catch (error) {
     console.error("Error fetching data:", error);
     res.status(500).json({ error: error.message });
