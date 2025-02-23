@@ -1,35 +1,43 @@
 const { absen_mahasiswas, absen_pertemuans } = require("../models");
 
 const getInformasiKehadiran = async (req, res) => {
-  const { matakuliah_nama } = req.params; // Ambil nama mata kuliah dari parameter
+  const { matakuliah_nama } = req.params;
 
   try {
-    // Ambil data kehadiran berdasarkan nama mata kuliah
     const dataKehadiran = await absen_mahasiswas.findAll({
-      where: { matakuliah_nama: matakuliah_nama },
+      where: { matakuliah_nama },
       include: [
         {
           model: absen_pertemuans,
           as: "pertemuan",
-          attributes: ["pertemuan_ke", "waktu", "tanggal_kuliah", "status"], // Ambil field yang diperlukan
+          attributes: ["pertemuan_ke", "waktu", "tanggal_kuliah", "status"],
         },
       ],
-      attributes: ["nim", "matakuliah_nama", "pertemuan_ke", "status"], // Ambil field yang diperlukan
+      attributes: ["nim", "matakuliah_nama", "pertemuan_ke", "status"],
     });
 
     if (!dataKehadiran.length) {
       return res.status(404).json({ message: "Data kehadiran tidak ditemukan" });
     }
 
-    // Ganti status null menjadi "Perkuliahan dibatalkan oleh dosen"
-    const formattedData = dataKehadiran.map((item) => ({
-      ...item.toJSON(),
-      status: item.status === null ? "Perkuliahan dibatalkan oleh dosen" : item.status,
-    }));
+    // Ganti status NULL atau undefined menjadi "Perkuliahan dibatalkan oleh dosen"
+    const formattedData = dataKehadiran.map((item) => {
+      const itemJSON = item.toJSON(); // Pastikan objek bisa diakses
+
+      return {
+        ...itemJSON,
+        status:
+          itemJSON.status === null ||
+          itemJSON.status === "NULL" ||
+          itemJSON.status === undefined
+            ? "Perkuliahan dibatalkan oleh dosen"
+            : itemJSON.status,
+      };
+    });
 
     res.status(200).json(formattedData);
   } catch (error) {
-    console.error("Error fetching data:", error); 
+    console.error("Error fetching data:", error);
     res.status(500).json({ error: error.message });
   }
 };
