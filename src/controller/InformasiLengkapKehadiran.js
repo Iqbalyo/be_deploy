@@ -1,24 +1,18 @@
 const { absen_mahasiswas, absen_pertemuans } = require("../models");
-const { Op } = require("sequelize");
 
 const getInformasiKehadiran = async (req, res) => {
   const { matakuliah_nama } = req.params; // Ambil nama mata kuliah dari parameter
 
   try {
-    // Ambil data kehadiran berdasarkan nama mata kuliah dan filter status
+    // Ambil data kehadiran berdasarkan nama mata kuliah
     const dataKehadiran = await absen_mahasiswas.findAll({
-      where: {
-        matakuliah_nama: matakuliah_nama,
-        status: { [Op.in]: ["H", "I", "A"] }, // Filter status
-      },
-      include: [
-        {
-          model: absen_pertemuans,
-          as: "pertemuan",
-          attributes: ["pertemuan_ke", "waktu", "tanggal_kuliah", "status"], // Ambil field yang diperlukan
-        },
-      ],
-      attributes: ["nim", "matakuliah_nama", "pertemuan_ke", "status"], // Ambil field yang diperlukan
+      where: { matakuliah_nama: matakuliah_nama },
+      include: [{
+        model: absen_pertemuans,
+        as: 'pertemuan',
+        attributes: ['pertemuan_ke', 'waktu', 'tanggal_kuliah', 'status'], // Ambil field yang diperlukan
+      }],
+      attributes: ['nim', 'matakuliah_nama', 'pertemuan_ke', 'status'], // Ambil field yang diperlukan
     });
 
     if (!dataKehadiran.length) {
