@@ -10,7 +10,6 @@ const getSemesterByNim = async (req, res) => {
       attributes: ['semester_ke', 'semester'], // Kolom yang diperlukan
       order: [['semester_ke', 'DESC']], // Mengambil semester terbaru
     });
-    
 
     if (!semester) {
       return res.status(404).json({ message: "Semester tidak ditemukan" });
