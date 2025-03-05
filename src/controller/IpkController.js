@@ -29,4 +29,4 @@ const findAll = async (req, res) => {
     }
 };
 
-module.exports = { findAll };
+module.exports = { findAll, findAllByIpk, findIpsAndSemester };
