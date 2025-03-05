@@ -7,7 +7,7 @@ const getSemesterByNim = async (req, res) => {
   try {
     const semester = await AktivitasKuliah.findOne({
       where: { nim },
-      attributes: ['semester_ke', 'semester'], // Kolom yang diperlukan
+      attributes: ['semester_ke', 'semester', 'jurusan_id'], // Kolom yang diperlukan
       order: [['semester_ke', 'DESC']], // Mengambil semester terbaru
     });
 
