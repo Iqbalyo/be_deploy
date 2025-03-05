@@ -9,29 +9,24 @@ const findAll = async (req, res) => {
             });
         }
 
-        console.log("Data dari database:", data);
-
         // Mapping jurusan_id ke nama jurusan
         const formattedData = data.map(item => {
             let jurusanNama = "Tidak Diketahui";
-            if (item.jurusan_id != null) {
-                if (item.jurusan_id === 1) jurusanNama = "Teknik Informatika";
-                else if (item.jurusan_id === 2) jurusanNama = "Sistem Informasi";
-                else if (item.jurusan_id === 3) jurusanNama = "Sistem Komputer";
-            }
+            if (item.jurusan_id === 1) jurusanNama = "Teknik Informatika";
+            else if (item.jurusan_id === 2) jurusanNama = "Sistem Informasi";
+            else if (item.jurusan_id === 3) jurusanNama = "Sistem Komputer";
 
             return {
-                ...item, // Gunakan langsung tanpa dataValues
-                jurusan_nama: jurusanNama,
+                ...item.dataValues,
+                jurusan_nama: jurusanNama, // Tambahkan nama jurusan
             };
         });
 
-        console.log("Data setelah diproses:", formattedData);
         res.json({ data: formattedData });
     } catch (error) {
-        console.error("Error di findAll:", error);
+        console.error(error);
         res.status(500).json({ error: "Server error" });
     }
 };
 
-module.exports = { findAll };
+module.exports = { findAll, findAllByIpk, findIpsAndSemester };
