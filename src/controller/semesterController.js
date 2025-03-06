@@ -5,7 +5,7 @@ const getSemesterByNim = async (req, res) => {
   const { nim } = req.params;
 
   try {
-    
+
     const semester = await AktivitasKuliah.findOne({
       where: { nim },
       attributes: ['semester_ke', 'semester'], // Kolom yang diperlukan
@@ -21,5 +21,6 @@ const getSemesterByNim = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 module.exports = { getSemesterByNim };
