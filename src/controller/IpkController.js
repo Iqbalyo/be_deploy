@@ -28,6 +28,5 @@ const findAll = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 };
-//pokor
 
 module.exports = { findAll, findAllByIpk, findIpsAndSemester };
