@@ -15,7 +15,6 @@ const findAll = async (req, res) => {
             if (item.jurusan_id === 1) jurusanNama = "Teknik Informatika";
             else if (item.jurusan_id === 2) jurusanNama = "Sistem Informasi";
             else if (item.jurusan_id === 3) jurusanNama = "Sistem Komputer";
-
             return {
                 ...item.dataValues,
                 jurusan_nama: jurusanNama, // Tambahkan nama jurusan
