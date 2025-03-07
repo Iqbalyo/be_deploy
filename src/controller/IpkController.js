@@ -33,7 +33,7 @@ const findAllByIpk = async (req, res) => {
             where: {
                 nim: nim, 
             },
-            attributes: ['ips','ipk', 'semester_ke','jurusan_id'],
+            attributes: ['ips','ipk', 'semester_ke','jurusan_id', 'periode'],
             order: [['semester_ke', 'DESC']],
         });
 
@@ -44,6 +44,7 @@ const findAllByIpk = async (req, res) => {
                 ipk: latestData.ipk,
                 semester_ke: latestData.semester_ke,
                 jurusan: latestData.jurusan_id,
+                periode: latestData.periode,
             });
         } else {
             console.log("Data tidak ditemukan");
