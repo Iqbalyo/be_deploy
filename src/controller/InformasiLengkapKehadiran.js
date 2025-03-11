@@ -10,7 +10,7 @@ const getInformasiKehadiran = async (req, res) => {
         {
           model: absen_pertemuans,
           as: "pertemuan",
-          attributes: ["pertemuan_ke", "waktu", "tanggal_kuliah", "status"],
+          attributes: ["pertemuan_ke", "waktu", "tanggal_kuliah", "status", "dosen"],
         },
       ],
       attributes: ["nim", "matakuliah_nama", "pertemuan_ke", "status"],
