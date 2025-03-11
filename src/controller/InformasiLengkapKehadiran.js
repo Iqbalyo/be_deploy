@@ -20,10 +20,9 @@ const getInformasiKehadiran = async (req, res) => {
       return res.status(404).json({ message: "Data kehadiran tidak ditemukan" });
     }
 
-    // Ganti status NULL atau undefined menjadi "Perkuliahan dibatalkan oleh dosen"
+    // Format data & atur status jika NULL
     const formattedData = dataKehadiran.map((item) => {
       const itemJSON = item.toJSON(); // Pastikan objek bisa diakses
-
       return {
         ...itemJSON,
         status:
@@ -32,6 +31,7 @@ const getInformasiKehadiran = async (req, res) => {
           itemJSON.status === undefined
             ? "Perkuliahan dibatalkan oleh dosen"
             : itemJSON.status,
+        dosen: itemJSON.pertemuan?.dosen || "Dosen tidak ditemukan",
       };
     });
 
